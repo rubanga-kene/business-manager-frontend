@@ -1,27 +1,12 @@
 "use client";
 
-import { DialogFooter } from "@/components/ui/dialog";
 import { useState } from "react";
 
-import { Plus, Users, Edit, Trash, Search, UserCheck } from "lucide-react";
+import { Users, Edit, Trash, Search, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
+
 import {
   Table,
   TableBody,
@@ -33,8 +18,9 @@ import {
 import { UserCog } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
-import { Input } from "../ui/input";
-import {toast} from "sonner"
+
+import UsersDialog from "../users/users-dialog";
+import { ToastContainer } from "react-toastify";
 
 
 export default function UsersContent() {
@@ -73,7 +59,7 @@ export default function UsersContent() {
     <>
         {/* ///////////  COMPONENT HEADER   /////////////////////// */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">System Users</h2>
+        <h2 className="text-xl font-semibold">System User Management</h2>
       </div>
 
         {/* ///////////  USER CARDS   /////////////////////// */}
@@ -155,85 +141,7 @@ export default function UsersContent() {
               </div>
 
               {/* ///////////  ADD USER DIALOG    /////////////////////// */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  {/* <Button className="mb-6">Create New Invoice</Button> */}
-                  <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add User
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px] dark:bg-zinc-900">
-                  <DialogHeader>
-                    <DialogTitle>Create New User</DialogTitle>
-                    <DialogDescription>
-                      Create a new user. Fill in all the required details.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="customer" className="text-right">
-                        User Role
-                      </Label>
-                      <Select>
-                        <SelectTrigger className="col-span-3">
-                          <SelectValue placeholder="Select user role" />
-                        </SelectTrigger>
-                        <SelectContent defaultValue="Staff">
-                          <SelectItem value="samira">Admin</SelectItem>
-                          <SelectItem value="ram">Staff</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="name" className="text-right">
-                        Name
-                      </Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        className="col-span-3 dark:bg-zinc-800" 
-                        required
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="email" className="text-right">
-                        Email
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        className="col-span-3 dark:bg-zinc-800"
-                        required
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="contact" className="text-right">
-                        Contact
-                      </Label>
-                      <Input
-                        className="col-span-3 dark:bg-zinc-800"
-                        type="text"
-                        id="contact"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button
-                     className="bg-blue-500 hover:bg-blue-600 text-white"
-                      type="submit"
-                      onClick={() => {
-                        toast.success("User created",{
-                          description: "New user has been created successfully",
-                        });
-                      }}
-                    >
-                      Create User
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <UsersDialog/>
             </div>
 
           {/* ///////////  USER TABLE   /////////////////////// */}
@@ -312,6 +220,7 @@ export default function UsersContent() {
           </Tabs>
         </CardContent>
       </Card>
+      <ToastContainer/>
     </>
   );
 }

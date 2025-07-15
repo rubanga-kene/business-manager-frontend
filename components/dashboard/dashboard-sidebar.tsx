@@ -11,7 +11,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 
-import { Building2, ChevronLeft, Search } from "lucide-react";
+import { Building2, Menu} from "lucide-react";
 
 interface MenuItem {
   title: string;
@@ -47,7 +47,8 @@ export function DashboardSidebar({
       )}
     >
       {/* Header */}
-      <div className="flex h-16 items-center justify-between border-b px-4">
+      <div className={cn("flex h-16 items-center justify-between border-b px-4", 
+      collapsed ? "flex-col justify-center px-2 py-2 space-y-2" : "justify-between px-4")}>
         <div
           className={cn(
             "flex items-center space-x-2",
@@ -67,32 +68,18 @@ export function DashboardSidebar({
           )}
         </div>
         <Button
-          variant="ghost"
-          size="icon"
+          variant="outline"
+          // size="icon"
           onClick={onToggle}
-          className="h-8 w-8"
+          className={cn(
+            "flex items-center gap-2 text-sm font-medium transition-all duration-200 hover:bg-accent hover:text-accent-foreground ml-2",
+            collapsed ? "px-2 py-1.5 h-8 text-xs mb-2" : "px-3 py-2 h-8"
+          )}
         >
-          <ChevronLeft
-            className={cn(
-              "h-4 w-4 transition-transform",
-              collapsed && "rotate-180"
-            )}
-          />
+          <Menu className="h-4 w-4" />
+          {/* <span className={collapsed ? "text-xs" : ""}>Menu</span> */}
         </Button>
       </div>
-
-      {/* Search */}
-      {!collapsed && (
-        <div className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              className="w-full rounded-md border bg-background px-9 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              placeholder="Search..."
-            />
-          </div>
-        </div>
-      )}
 
       {/* Navigation */}
       <ScrollArea className="flex-1 px-3">

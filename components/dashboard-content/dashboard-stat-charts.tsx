@@ -1,9 +1,12 @@
-"use client"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem,  DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Bar,
   BarChart as RechartsBarChart,
@@ -14,11 +17,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
- 
-} from "recharts"
+} from "recharts";
 
-export default function AnalyticsContent() {
-
+export default function DashboardStatCharts() {
   const highSales = [
     { name: "Sun", value: 8 },
     { name: "Mon", value: 10 },
@@ -27,9 +28,9 @@ export default function AnalyticsContent() {
     { name: "Thu", value: 9 },
     { name: "Fri", value: 11 },
     { name: "Sat", value: 12 },
-  ]
+  ];
 
-   const lowSales = [
+  const lowSales = [
     { name: "Sun", value: 1 },
     { name: "Mon", value: 2 },
     { name: "Tue", value: 2 },
@@ -37,7 +38,7 @@ export default function AnalyticsContent() {
     { name: "Thu", value: 0 },
     { name: "Fri", value: 3 },
     { name: "Sat", value: 1 },
-  ]
+  ];
 
   const customersData = [
     { name: "Sun", value: 8000 },
@@ -46,20 +47,17 @@ export default function AnalyticsContent() {
     { name: "Wed", value: 9000 },
     { name: "Thu", value: 6000 },
     { name: "Fri", value: 8000 },
-  ]
+  ];
 
   return (
     <>
-        {/* ///////////  COMPONENT HEADER   /////////////////////// */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Business Analytics and Reports</h2>
-      </div>
-          {/*Rating */}
-      <div className=" gap-6 mb-6">
-
+      {/*Stat Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
-            <CardTitle className="text-base font-medium">Sales over time</CardTitle>
+            <CardTitle className="text-base font-medium">
+              Sales over time
+            </CardTitle>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 text-xs">
@@ -73,9 +71,12 @@ export default function AnalyticsContent() {
             </DropdownMenu>
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <div className="h-[300px] w-full">
+            <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <RechartsLineChart data={customersData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <RechartsLineChart
+                  data={customersData}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} />
                   <YAxis hide={true} />
@@ -86,9 +87,9 @@ export default function AnalyticsContent() {
                           <div className="bg-background p-2 border rounded shadow-sm">
                             <p className="text-xs">{`${payload[0].value}`}</p>
                           </div>
-                        )
+                        );
                       }
-                      return null
+                      return null;
                     }}
                   />
                   <Line
@@ -96,7 +97,12 @@ export default function AnalyticsContent() {
                     dataKey="value"
                     stroke="#3B82F6"
                     strokeWidth={2}
-                    dot={{ r: 4, fill: "white", stroke: "#3B82F6", strokeWidth: 2 }}
+                    dot={{
+                      r: 4,
+                      fill: "white",
+                      stroke: "#3B82F6",
+                      strokeWidth: 2,
+                    }}
                     activeDot={{ r: 6 }}
                     fill="url(#colorUv)"
                   />
@@ -113,17 +119,11 @@ export default function AnalyticsContent() {
           </CardContent>
         </Card>
 
-     
-
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
-        
-          {/* /////////   TOP SELLING ITEMS  //////// */}
-       <Card>
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
-            <CardTitle className="text-base font-medium">Top selling items</CardTitle>
+            <CardTitle className="text-base font-medium">
+              Top selling items
+            </CardTitle>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 text-xs">
@@ -139,7 +139,10 @@ export default function AnalyticsContent() {
           <CardContent className="p-4 pt-0">
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <RechartsBarChart data={highSales} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <RechartsBarChart
+                  data={highSales}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} />
                   <YAxis hide={true} />
@@ -150,9 +153,9 @@ export default function AnalyticsContent() {
                           <div className="bg-background p-2 border rounded shadow-sm">
                             <p className="text-xs">{`${payload[0].value} K`}</p>
                           </div>
-                        )
+                        );
                       }
-                      return null
+                      return null;
                     }}
                   />
                   <Bar dataKey="value" fill="#26bd26db" radius={[4, 4, 0, 0]} />
@@ -162,10 +165,11 @@ export default function AnalyticsContent() {
           </CardContent>
         </Card>
 
-        {/* /////   LOW SELLING PRODUCTS /////////// */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
-            <CardTitle className="text-base font-medium">Low selling items</CardTitle>
+            <CardTitle className="text-base font-medium">
+              Low selling items
+            </CardTitle>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 text-xs">
@@ -181,7 +185,10 @@ export default function AnalyticsContent() {
           <CardContent className="p-4 pt-0">
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <RechartsBarChart data={lowSales} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <RechartsBarChart
+                  data={lowSales}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} />
                   <YAxis hide={true} />
@@ -192,9 +199,9 @@ export default function AnalyticsContent() {
                           <div className="bg-background p-2 border rounded shadow-sm">
                             <p className="text-xs">{`${payload[0].value} K`}</p>
                           </div>
-                        )
+                        );
                       }
-                      return null
+                      return null;
                     }}
                   />
                   <Bar dataKey="value" fill="#F59E0B" radius={[4, 4, 0, 0]} />
@@ -203,13 +210,7 @@ export default function AnalyticsContent() {
             </div>
           </CardContent>
         </Card>
-
-       
       </div>
-
-
-
-    
     </>
-  )
+  );
 }

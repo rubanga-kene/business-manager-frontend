@@ -6,11 +6,12 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import {
   BarChart,
   TrendingUp,
-  Package,
   Users,
-  FileText,
   Settings,
   PieChart,
+  Truck,
+  LayoutGrid,
+  Boxes,
   
 } from "lucide-react";
 
@@ -18,12 +19,13 @@ import DashboardContent from "@/components/dashboard/dashboard-content";
 import SalesContent from "@/components/dashboard/sales-content";
 import InventoryContent from "@/components/dashboard/inventory-content";
 import UsersContent from "@/components/dashboard/users-content";
-import ComingSoonContent from "@/components/dashboard/coming-soon-content";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import AnalyticsContent from "@/components/dashboard/analytics-content"
 import React from "react";
 import SettingsContent from "@/components/dashboard/settings-content";
+import CategoriesContent from "@/components/dashboard/categories-content";
+import SuppliersContent from "@/components/dashboard/suppliers-content";
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -51,8 +53,20 @@ export default function Dashboard() {
     {
       title: "Inventory",
       url: "#",
-      icon: Package,
+      icon: Boxes,
       key: "inventory",
+    },
+    {
+      title: "Categories",
+      url: "#",
+      icon: LayoutGrid,
+      key: "categories",
+    },
+    {
+      title: "Suppliers",
+      url: "#",
+      icon: Truck,
+      key: "suppliers",
     },
     {
       title: "Analytics",
@@ -65,12 +79,6 @@ export default function Dashboard() {
       url: "#",
       icon: Users,
       key: "users",
-    },
-    {
-      title: "Reports",
-      url: "#",
-      icon: FileText,
-      key: "reports",
     },
     {
       title: "Settings",
@@ -89,6 +97,10 @@ export default function Dashboard() {
         return <SalesContent />;
       case "inventory":
         return <InventoryContent />;
+      case "categories":
+        return <CategoriesContent />;
+      case "suppliers":
+        return <SuppliersContent />;
       case "users":
         return <UsersContent />;
       case "analytics":
@@ -96,12 +108,7 @@ export default function Dashboard() {
       case "settings":
         return <SettingsContent />
       default:
-        return (
-          <ComingSoonContent
-            section={activeSection}
-            onReturnToDashboard={() => setActiveSection("dashboard")}
-          />
-        );
+        return <DashboardContent />;
     }
   };
 

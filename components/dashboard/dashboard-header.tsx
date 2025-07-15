@@ -80,6 +80,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        
       </div>
     </header>
   );

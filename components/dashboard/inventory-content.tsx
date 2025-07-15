@@ -1,392 +1,475 @@
-"use client"
+"use client";
 
-import { DialogFooter } from "@/components/ui/dialog"
-
-import { Filter, Plus, MoreHorizontal, Search,  Star, ArrowUp, ArrowDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { MoreHorizontal, RotateCcw, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
-import { Input } from "../ui/input"
-import { toast } from "sonner"
+} from "@/components/ui/dropdown-menu";
+import { Tabs } from "@radix-ui/react-tabs";
+import { TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+import { useState, useEffect } from "react";
+import { Product, Category, Supplier } from "@/lib/types";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
+import { toast, ToastContainer } from "react-toastify";
+import CategoryDistribution from "../inventory/category-distribution";
+import InventoryStatCards from "../inventory/inventory-stat-cards";
+import {
+  deleteProduct,
+  fetchPaginatedProducts,
+} from "@/services/products";
+import { fetchSuppliers } from "@/services/suppliers";
+import { fetchCategories } from "@/services/categories";
+import AddProductDialog from "../inventory/add-product-dialog";
+import { ConfirmDeleteDialog } from "../confirm-delete-dialog";
+import { ViewDetailsDialog } from "../view-details-dialog";
+import  EditProductSheet  from "../inventory/edit-product-sheet";
+// import AddSupplierDialog from "../inventory/add-supplier-dialog";
+// import AddCategoryDialog from "../inventory/add-category-dialog";
+
 export default function InventoryContent() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [activeTab, setActiveTab] = useState<string>("all");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 5;
+  const totalPages = Math.ceil(totalCount / pageSize);
+  // for searching
+  const [searchTerm, setSearchTerm] = useState("");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const categoryData = [
-    { name: "Category A", value: 35 },
-    { name: "Category B", value: 45 },
-    { name: "Category C", value: 55 },
-    { name: "Category D", value: 25 },
-  ]
+  const [openViewDialog, setOpenViewDialog] = useState(false);
+  const [openEditSheet, setOpenEditSheet] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]
+  useEffect(() => {
+    const loadProducts = async () => {
+      console.log({ currentPage, activeTab, searchTerm });
+      try {
+        const data = await fetchPaginatedProducts(
+          currentPage,
+          pageSize,
+          activeTab
+        );
+        setProducts(data.results);
+        setTotalCount(data.count);
+      } catch {
+        toast.error("Failed to upload products", { position: "top-center" });
+      }
+    };
 
-  const stockItems = [
-    {
-      id: "P-004",
-      name: "Orange",
-      category: "Foods",
-      quantity: "123",
-      status: "In Stock",
-      price: "4500",
-    },
-    {
-      id: "P-005",
-      name: "Orange",
-      category: "Foods",
-      quantity: "123",
-      status: "Few Left",
-      price: "4500",
-    },
-   {
-      id: "P-006",
-      name: "Orange",
-      category: "Foods",
-      quantity: "123",
-      status: "Out of Stock",
-      price: "4500",
-    },
-  ]
+    loadProducts();
+  }, [currentPage, activeTab, searchTerm, refreshTrigger]);
+
+  const handleProductAdded = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await fetchCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error("Failed to load categories", err);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    const loadSuppliers = async () => {
+      try {
+        const data = await fetchSuppliers();
+        setSuppliers(data);
+      } catch (err) {
+        console.error("Failed to load categories", err);
+      }
+    };
+
+    loadSuppliers();
+  }, []);
+
+  type BadgeVariant =
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "success"
+    | "warning";
+
+  const getStockStatus = (
+    quantity: number
+  ): { label: string; variant: BadgeVariant } => {
+    if (quantity === 0)
+      return { label: "Out of Stock", variant: "destructive" };
+    if (quantity <= 10) return { label: "Few Left", variant: "warning" };
+    return { label: "In Stock", variant: "success" };
+  };
+
+  // Reusable table component for product list
+  function ProductTable({ products }: { products: Product[] }) {
+    return (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Product ID</TableHead>
+            <TableHead>Product Name</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Quantity</TableHead>
+            <TableHead>Unit Price</TableHead>
+            <TableHead>Expiry Date</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {products.map((product) => (
+            <TableRow key={product.id}>
+              <TableCell className="font-medium">{product.id}</TableCell>
+              <TableCell>{product.product_name}</TableCell>
+              <TableCell>
+                {product.category?.category_name || "Uncategorized"}
+              </TableCell>
+              <TableCell>{product.quantity}</TableCell>
+              <TableCell>{product.unit_price}</TableCell>
+              <TableCell>{product.e_date ? product.e_date : "N/A"}</TableCell>
+              <TableCell>
+                <Badge variant={getStockStatus(product.quantity).variant}>
+                  {getStockStatus(product.quantity).label}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <div className="flex space-x-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          setOpenViewDialog(true);
+                        }}
+                      >
+                        View
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          setOpenEditSheet(true);
+                        }}
+                      >
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          setOpenDelete(true);
+                        }}
+                      >
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  {/* To view */}
+                  {selectedProduct && (
+                    <ViewDetailsDialog
+                      open={openViewDialog}
+                      setOpen={setOpenViewDialog}
+                      title="Product Details"
+                      fields={[
+                        { label: "Product ID", value: selectedProduct.id },
+                        {
+                          label: "Product Category",
+                          value:
+                            selectedProduct.category?.category_name ||
+                            "Uncategorised",
+                        },
+                        {
+                          label: "Product Supplier",
+                          value:
+                            selectedProduct.supplier?.supplier_name ||
+                            "Not available",
+                        },
+                        {
+                          label: "Product Name",
+                          value:
+                            selectedProduct.product_name || "Not available",
+                        },
+                        {
+                          label: "Product Description",
+                          value:
+                            selectedProduct.product_description ||
+                            "Not available",
+                        },
+                        {
+                          label: "Unit Price",
+                          value: selectedProduct.unit_price || "Not available",
+                        },
+                        {
+                          label: "Quantity",
+                          value: selectedProduct.quantity || "Not available",
+                        },
+                        {
+                          label: "Manufacturing date",
+                          value: selectedProduct.m_date || "Not available",
+                        },
+                        {
+                          label: "Expiry date ",
+                          value: selectedProduct.e_date || "Not available",
+                        },
+
+                        // Add more fields if needed
+                      ]}
+                    />
+                  )}
+
+                  {/* Edit sheet */}
+                  <EditProductSheet
+                  open={openEditSheet}
+                  setOpen={setOpenEditSheet}
+                  initialData={selectedProduct}
+                  categories={categories}
+                  suppliers={suppliers}
+                  onProductUpdated={handleProductAdded}
+                />
+
+                  {/* To delete */}
+                  {selectedProduct && (
+                    <ConfirmDeleteDialog
+                      open={openDelete}
+                      setOpen={setOpenDelete}
+                      itemName={selectedProduct.product_name}
+                      onConfirm={() => {
+                        deleteProduct(
+                          selectedProduct.id,
+                          selectedProduct.product_name,
+                          () => {
+                            handleProductAdded();
+                            setSelectedProduct(null);
+                          }
+                        );
+                      }}
+                    />
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  }
 
   return (
     <>
-    {/* ///////////   COMPONENT HEADER //////////////////// */}
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Inventory & Stock Management</h2>
-        
       </div>
 
-    {/* ///////////  INVENTORY CARDS   /////////////////////// */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      {/* ///////////  INVENTORY CARDS   /////////////////////// */}
+      <InventoryStatCards />
+
+      {/* ///////////  TABS AND TABLE   /////////////////////// */}
+      <div className="md:col-span-2 gap-6 mb-6">
         <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-full mr-4">
-              <Star className="h-6 w-6 text-blue-500" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">New Stock</p>
-              <h3 className="text-2xl font-bold">Phones</h3>
-              <p className="text-xs text-blue-500 dark:text-blue-500">No. of Items: 24</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-green-50 dark:bg-green-950 p-3 rounded-full mr-4">
-              <ArrowUp className="h-6 w-6 text-green-500" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Highest Stock</p>
-              <h3 className="text-2xl font-bold">Fruits</h3>
-              <p className="text-xs text-green-600 dark:text-green-400">Items left: 234</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-amber-50 dark:bg-amber-950 p-3 rounded-full mr-4">
-              <ArrowDown className="h-6 w-6 text-amber-500" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Lowest Stock</p>
-              <h3 className="text-2xl font-bold">Shoes</h3>
-              <p className="text-xs text-amber-600 dark:text-amber-400">Items left: 2</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          <CardHeader className="p-4 pb-0">
+            <CardTitle className="text-base font-medium">
+              Product Stock
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => {
+                setActiveTab(value);
+                setCurrentPage(1);
+              }}
+              className="w-full"
+            >
+              <TabsList className="mb-4 border-b w-full justify-start rounded-none bg-transparent p-0 overflow-x-auto scrollbar-hide">
+                <TabsTrigger
+                  value="all"
+                  className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:cursor-pointer"
+                >
+                  All Products
+                </TabsTrigger>
 
-        <div className="md:col-span-2 gap-6 mb-6">
-          <Card>
-            <CardHeader className="p-4 pb-0">
-              <CardTitle className="text-base font-medium">Product Stock</CardTitle>
-            </CardHeader>
-            <div className="flex flex-col md:flex-row justify-between mb-2 gap-4 p-6">
-              <div className="relative">
-                <Search className="absolute  left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"  />
-                <input
-                  type="text"
-                  placeholder="Search product by name or category or product ID"
-                  className="pl-10 pr-4 py-2 border border-input rounded-md w-full md:w-[400px] text-sm bg-background"
-                />
-                
-              </div>
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
-                <Filter className="h-4 w-4" />
-                Filter Products
-              </Button>
-
-              {/* ///////////  ADD CATEGORY  DIALOG    /////////////////////// */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="bg-green-500 hover:bg-green-600 text-white">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Category
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="dark:bg-zinc-900 sm:max-w-[600px]">
-                  <DialogHeader>
-                    <DialogTitle>Add New Category</DialogTitle>
-                    <DialogDescription>
-                      Add a new category. Fill in all the required details.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="name" className="text-right">
-                        Category Name
-                      </Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        className="col-span-3 dark:bg-zinc-800"
-                        required
-                      />
-                    </div>
-                    
-                  </div>
-                  <DialogFooter>
-                    <Button
-                     className="bg-blue-500 hover:bg-blue-600 text-white"
-                      type="submit"
-                      onClick={() => {
-                        toast.success("Product Added",{
-                          description: "New product has been added successfully",
-                        });
-                      }}
-                    >
-                      Create Category
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-
-              {/* ///////////  ADD PRODUCT DIALOG    /////////////////////// */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Product
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px] dark:bg-zinc-900">
-                  <DialogHeader>
-                    <DialogTitle>Add New Product</DialogTitle>
-                    <DialogDescription>
-                      Add a new Product. Fill in all the required details.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="category" className="text-right">
-                        Product Category
-                      </Label>
-                      <Select>
-                        <SelectTrigger className="col-span-3 dark:bg-zinc-800">
-                          <SelectValue placeholder="Select user role" />
-                        </SelectTrigger>
-                        <SelectContent defaultValue="none" className="dark:bg-zinc-900">
-                          <SelectItem value="food">Food</SelectItem>
-                          <SelectItem value="electronic">Electronics</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="name" className="text-right">
-                        Name
-                      </Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        className="col-span-3 dark:bg-zinc-800"
-                        required
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="price" className="text-right">
-                        Unit Price
-                      </Label>
-                      <Input
-                        id="name"
-                        type="number"
-                        min={1}
-                        className="col-span-3 dark:bg-zinc-800"
-                        required
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="quantity" className="text-right">
-                        Quantity
-                      </Label>
-                      <Input
-                        id="name"
-                        type="number"
-                        min={1}
-                        className="col-span-3 dark:bg-zinc-800"
-                        required
-                      />
-                    </div>
-                    
-                    
-                  </div>
-                  <DialogFooter>
-                    <Button
-                     className="bg-blue-500 hover:bg-blue-600 text-white"
-                      type="submit"
-                      onClick={() => {
-                        toast.success("Product Added",{
-                          description: "New product has been added successfully",
-                        });
-                      }}
-                    >
-                      Add Product
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-
-            
-            </div>
-            <CardContent className="p-4">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Product ID</TableHead>
-                      <TableHead>Product Name</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Quntity</TableHead>
-                      <TableHead>Unit Price </TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {stockItems.map((stockItem) => (
-                      <TableRow key={stockItem.id}>
-                        <TableCell className="font-medium">{stockItem.id}</TableCell>
-                        <TableCell>{stockItem.name}</TableCell>
-                        <TableCell>{stockItem.category}</TableCell>
-                        
-                        <TableCell>{stockItem.quantity}</TableCell>
-                        <TableCell>{stockItem.price}</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              stockItem.status === "In Stock"
-                                ? "success"
-                                : stockItem.status === "Few Left"
-                                  ? "warning"
-                                  : stockItem.status === "Out of Stock"
-                                    ? "destructive"
-                                    : "default"
-                            }
-                          >
-                            {stockItem.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  toast.success( "Stock deleted",{
-                                    description: `Product stock has been deleted successfully`,
-                                    
-                                  })
-                                }}
-                              >
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-      
-
-      {/* //////////   PIE CHART  /////////// */}
-      <div>
-          <Card>
-            <CardHeader className="p-4 pb-0">
-              <CardTitle className="text-base font-medium">Product Category Distribution</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categoryData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {categoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="flex flex-wrap justify-center gap-4 mt-4">
-                {categoryData.map((entry, index) => (
-                  <div key={index} className="flex items-center">
-                    <div
-                      className="w-3 h-3 rounded-full mr-1"
-                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                    ></div>
-                    <span className="text-xs">
-                      {entry.name}: {entry.value}
-                    </span>
-                  </div>
+                {categories.map((category) => (
+                  <TabsTrigger
+                    key={category.id}
+                    value={category.id.toString()}
+                    // value={category.category_name.toLowerCase()}
+                    className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:cursor-pointer"
+                  >
+                    {category.category_name}
+                  </TabsTrigger>
                 ))}
+              </TabsList>
+
+              <div className="flex flex-col md:flex-row justify-between mb-2 gap-4 p-2 overflow-x-auto scrollbar-hide">
+                <div className="relative">
+                  <Search className="absolute  left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search product by name or category"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setCurrentPage(1); // reset page
+                      setSearchTerm(e.target.value);
+                    }}
+                    className="pl-10 pr-4 py-2 border border-input rounded-md w-full md:w-[350px] text-sm bg-background"
+                  />
+                  <Button
+                    onClick={handleProductAdded}
+                    variant="outline"
+                    className="ml-6"
+                  >
+                    Refresh
+                    <RotateCcw />
+                  </Button>
+                </div>
+
+                {/* <AddSupplierDialog/> */}
+                {/* <AddCategoryDialog/> */}
+                <AddProductDialog
+                  categories={categories}
+                  suppliers={suppliers}
+                  onProductAdded={handleProductAdded}
+                />
               </div>
-            </CardContent>
-          </Card>
+
+              {/* Tab Content for "all" */}
+              <TabsContent value={activeTab} className="w-full">
+                {products.length > 0 ? (
+                  <ProductTable products={products} />
+                ) : (
+                  <p className="p-4 text-gray-500">No products found.</p>
+                )}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+
+          {/* Pagination */}
+          <Pagination className="mt-6 mb-6">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) setCurrentPage(currentPage - 1);
+                  }}
+                />
+              </PaginationItem>
+
+              {/* First page + ellipsis if past page 3 */}
+              {currentPage > 3 && (
+                <>
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(1);
+                      }}
+                    >
+                      1
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                </>
+              )}
+
+              {/* Pages around current */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => Math.abs(currentPage - page) <= 2)
+                .map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="#"
+                      isActive={page === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(page);
+                      }}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+              {/* Last page + ellipsis */}
+              {currentPage < totalPages - 2 && (
+                <>
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(totalPages);
+                      }}
+                    >
+                      {totalPages}
+                    </PaginationLink>
+                  </PaginationItem>
+                </>
+              )}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages)
+                      setCurrentPage(currentPage + 1);
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </Card>
       </div>
 
+      {/* Pie Chart */}
+      <CategoryDistribution />
+
+      {/* Toast container */}
+      <ToastContainer />
     </>
-  )
+  );
 }
