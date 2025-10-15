@@ -13,7 +13,11 @@ import { fetchCategoryDistribution } from "@/services/products";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A28EFF", "#FF6666"];
 
-export default function CategoryDistribution() {
+interface CategoryDistributionProps {
+  refreshTrigger?: number;
+}
+
+export default function CategoryDistribution({ refreshTrigger }: CategoryDistributionProps) {
   const [categoryData, setCategoryData] = useState<{ name: string; value: number }[]>([]);
 
   useEffect(() => {
@@ -26,7 +30,7 @@ export default function CategoryDistribution() {
       }
     };
     loadData();
-  }, []);
+  }, [refreshTrigger]); // re-fetch when refreshTrigger changes
 
   return (
     <Card>

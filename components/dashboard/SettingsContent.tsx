@@ -48,8 +48,11 @@ export default function SettingsContent() {
 
             <Table>
               <TableHeader>
-                <TableHead>Business profile</TableHead>
-              </TableHeader>
+              <TableRow>
+                <TableHead colSpan={3}>Business profile</TableHead>
+              </TableRow>
+            </TableHeader>
+
               <TableBody className="text-left text-1.2">
                 <TableRow className="m-0">
                   <TableCell className="text-sm">Name</TableCell>
@@ -110,9 +113,6 @@ export default function SettingsContent() {
 
         {/* /////////  CARD 2 //////////////// */}
         <Card className="max-w-140 pt-3">
-          {/* <CardHeader >
-          <CardTitle className="text-sm">GLORY TO GOD LTD</CardTitle>
-        </CardHeader> */}
           <CardContent className="text-center max-h-130 ">
             <Avatar className="flex justify-center items-center ">
               <AvatarImage
@@ -132,8 +132,11 @@ export default function SettingsContent() {
 
             <Table>
               <TableHeader>
-                <TableHead>Business Info</TableHead>
+                <TableRow>
+                  <TableHead colSpan={3}>Business info</TableHead>
+                </TableRow>
               </TableHeader>
+
               <TableBody className="text-left text-1.2">
                 <TableRow className="m-0">
                   <TableCell className="text-sm">Name</TableCell>

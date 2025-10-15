@@ -15,17 +15,17 @@ import {
   
 } from "lucide-react";
 
-import DashboardContent from "@/components/dashboard/dashboard-content";
-import SalesContent from "@/components/dashboard/sales-content";
-import InventoryContent from "@/components/dashboard/inventory-content";
-import UsersContent from "@/components/dashboard/users-content";
-import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import AnalyticsContent from "@/components/dashboard/analytics-content"
+import DashboardContent from "@/components/dashboard/DashboardContent";
+import SalesContent from "@/components/dashboard/SalesContent";
+import InventoryContent from "@/components/dashboard/InventoryContent";
+import UsersContent from "@/components/dashboard/UsersContent";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import AnalyticsContent from "@/components/dashboard/AnalyticsContent"
 import React from "react";
-import SettingsContent from "@/components/dashboard/settings-content";
-import CategoriesContent from "@/components/dashboard/categories-content";
-import SuppliersContent from "@/components/dashboard/suppliers-content";
+import SettingsContent from "@/components/dashboard/SettingsContent";
+import CategoriesContent from "@/components/dashboard/CategoriesContent";
+import SuppliersContent from "@/components/dashboard/SuppliersContent";
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -34,8 +34,6 @@ export default function Dashboard() {
 
   const isMobile = useIsMobile();
   const [userCollapsed, setUserCollapsed] = useState(false);
-
-
 
   const menuItems = [
     {

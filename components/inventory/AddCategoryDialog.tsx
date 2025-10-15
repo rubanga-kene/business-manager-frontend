@@ -51,7 +51,7 @@ export default function AddCategoryDialog({ refreshCategories }: AddCategoryDial
             Add Category
           </Button>
         </DialogTrigger>
-        <DialogContent className="dark:bg-zinc-900 sm:max-w-[600px]">
+        <DialogContent className="dark:bg-slate-800 sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Add New Category</DialogTitle>
             <DialogDescription>
@@ -69,7 +69,7 @@ export default function AddCategoryDialog({ refreshCategories }: AddCategoryDial
                 type="text"
                 placeholder="Type category name..."
                 {...register('category_name', {required: "Category name is required"})}
-                className="col-span-3 dark:bg-zinc-800"
+                className="col-span-3 dark:bg-slate-900"
               />
               {errors?.category_name?.message && <small className="text-red-500">{errors.category_name.message}</small>}
             </div>
@@ -81,7 +81,7 @@ export default function AddCategoryDialog({ refreshCategories }: AddCategoryDial
                 id="description"
                 placeholder="Type category description..."
                 {...register('category_description')}
-                className="col-span-3 dark:bg-zinc-800"
+                className="col-span-3 dark:bg-slate-900"
                 
               />
 

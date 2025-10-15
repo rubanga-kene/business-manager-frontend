@@ -2,10 +2,11 @@
 
 import { Filter, FileText, } from "lucide-react";
 import { Button } from "@/components/ui/button";;
-import SalesDialog from "../sales/sales-dialog";
+import SalesDialog from "../sales/SalesDialog";
 import { ToastContainer } from "react-toastify";
-import SalesStatCards from "../sales/sales-stat-cards";
-import SalesTable from "../sales/sales-table";
+import SalesStatCards from "../sales/SalesStatCards";
+import SalesTable from "../sales/SalesTable";
+import SalesChart from "../sales/SalesCharts";
 
 export default function SalesContent() {
 
@@ -35,9 +36,13 @@ export default function SalesContent() {
       </div>
       {/* Sales stat catds */}
       <SalesStatCards/>
+ 
 
       {/* Sales Table */}
       <SalesTable/>
+
+           {/* sales charts */}
+      <SalesChart />
 
       {/* Toast container */}
       <ToastContainer/>

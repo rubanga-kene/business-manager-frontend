@@ -44,7 +44,7 @@ export default function AddSupplierDialog({ refreshSuppliers }: AddSupplierDialo
             Add Supplier
           </Button>
         </DialogTrigger>
-        <DialogContent className="dark:bg-zinc-900 sm:max-w-[600px]">
+        <DialogContent className="dark:bg-slate-800 sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Add New Supplier</DialogTitle>
             <DialogDescription>
@@ -62,7 +62,7 @@ export default function AddSupplierDialog({ refreshSuppliers }: AddSupplierDialo
                 type="text"
                 placeholder="Type supplier name..."
                 {...register('supplier_name', {required: 'The supplier name is required'})}
-                className="col-span-3 dark:bg-zinc-800"
+                className="col-span-3 dark:bg-slate-900"
                 
               />
               {errors?.supplier_name?.message && <small className="text-red-500">{errors.supplier_name.message}</small>}
@@ -76,7 +76,7 @@ export default function AddSupplierDialog({ refreshSuppliers }: AddSupplierDialo
                 type="text"
                 placeholder="Type supplier contact..."
                 {...register('supplier_contact', {required:'Contact is required'})}
-                className="col-span-3 dark:bg-zinc-800"
+                className="col-span-3 dark:bg-slate-900"
                 
               />
               {errors?.supplier_contact?.message && <small className="text-red-500">{errors.supplier_contact.message}</small>}
@@ -90,7 +90,7 @@ export default function AddSupplierDialog({ refreshSuppliers }: AddSupplierDialo
                 placeholder="Type supplier adderess..."
                 type="text"
                 {...register('supplier_address', {required:'address is required'})}
-                className="col-span-3 dark:bg-zinc-800"
+                className="col-span-3 dark:bg-slate-900"
               />
               {errors?.supplier_address?.message && <small className="text-red-500">{errors.supplier_address.message}</small>}
             </div>

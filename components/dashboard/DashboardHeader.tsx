@@ -11,9 +11,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { Bell, Users, Settings } from 'lucide-react';
+import { ThemeToggleButton } from '@/components/theme-toggle';
+import { Users, Settings } from 'lucide-react';
 import Link from 'next/link';
+import NotificationDropdown from '../header/NotificationDropdown';
 
 interface DashboardHeaderProps {
   title: string;
@@ -29,21 +30,14 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
         
         <div className="flex items-center space-x-4">
           <Button
-            variant="outline"
+            variant="ghost"
             className="flex items-center gap-2 px-3 py-2 h-auto"
           >
-            <div className="w-6 h-6 bg-purple-600 rounded flex items-center justify-center">
-              <span className="text-white text-xs font-bold">G</span>
-            </div>
             <span className="hidden md:inline">GLORY TO GOD LTD</span>
           </Button>
+          <NotificationDropdown />
 
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-          </Button>
-
-          <ThemeToggle />
+          <ThemeToggleButton />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -61,10 +55,16 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="w-56"
+              className="w-70 p-5 dark:bg-slate-800"
               align="end"
               forceMount
             >
+              <DropdownMenuItem>
+                <div className='mb-4'>
+                  <p className='mb-2'>Rubanga Kene Solomon</p>
+                  <span className='text-slate-800 dark:text-zinc-300'>rubangakene@gmail.com</span>
+                </div>
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <Users className="mr-2 h-4 w-4" />
                 <span>Profile</span>

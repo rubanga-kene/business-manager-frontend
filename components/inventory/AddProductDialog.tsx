@@ -82,7 +82,7 @@ const onSubmit = async (data: ProductFormData) => {
           Add Product
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] dark:bg-zinc-900">
+      <DialogContent className="sm:max-w-[700px]  dark:bg-slate-800">
         <DialogHeader>
           <DialogTitle>Add New Product</DialogTitle>
           <DialogDescription>Fill in all the required details.</DialogDescription>
@@ -104,10 +104,10 @@ const onSubmit = async (data: ProductFormData) => {
                   value={field.value}
                   defaultValue="Uncategorized"
                 >
-                  <SelectTrigger className="col-span-3 dark:bg-zinc-800">
+                  <SelectTrigger className="col-span-3 dark:bg-slate-900">
                     <SelectValue placeholder="Select product category" />
                   </SelectTrigger>
-                  <SelectContent className="dark:bg-zinc-900">
+                  <SelectContent className="dark:bg-slate-900">
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={String(cat.id)}>
                         {cat.category_name}
@@ -117,7 +117,7 @@ const onSubmit = async (data: ProductFormData) => {
                 </Select>
               )}
             />
-            {errors.category_id && <p className="col-span-4 text-red-500 text-sm">{errors.category_id.message}</p>}
+            {errors.category_id && <p className="col-span-2 text-red-500 text-sm">{errors.category_id.message}</p>}
           </div>
 
           {/* Supplier */}
@@ -134,10 +134,10 @@ const onSubmit = async (data: ProductFormData) => {
                   onValueChange={field.onChange}
                   value={field.value}
                 >
-                  <SelectTrigger className="col-span-3 dark:bg-zinc-800">
+                  <SelectTrigger className="col-span-3 dark:bg-slate-900">
                     <SelectValue placeholder="Select product supplier" />
                   </SelectTrigger>
-                  <SelectContent className="dark:bg-zinc-900">
+                  <SelectContent className="dark:bg-slate-900">
                     {suppliers.map((sup) => (
                       <SelectItem key={sup.id} value={String(sup.id)}>
                         {sup.supplier_name}
@@ -159,7 +159,7 @@ const onSubmit = async (data: ProductFormData) => {
               id="name"
               placeholder="Type product name..."
               type="text"
-              className="col-span-3 dark:bg-zinc-800"
+              className="col-span-3 dark:bg-slate-900"
               {...register("product_name", { required: "Product name is required" })}
             />
             {errors.product_name && <p className="col-span-4 text-red-500 text-sm">{errors.product_name.message}</p>}
@@ -173,7 +173,7 @@ const onSubmit = async (data: ProductFormData) => {
             <Textarea
               id="description"
               placeholder="Type product description..."
-              className="col-span-3 dark:bg-zinc-800"
+              className="col-span-3 dark:bg-slate-900"
               {...register("product_description")}
             />
             {errors.product_description && <p className="col-span-4 text-red-500 text-sm">{errors.product_description.message}</p>}
@@ -189,7 +189,7 @@ const onSubmit = async (data: ProductFormData) => {
               type="number"
               placeholder="0.0"
               min={1}
-              className="col-span-3 dark:bg-zinc-800"
+              className="col-span-3 dark:bg-slate-900"
               {...register("unit_price", {
                 required: "Price is required",
                 min: { value: 1, message: "Price must be at least 1" },
@@ -207,7 +207,7 @@ const onSubmit = async (data: ProductFormData) => {
               id="quantity"
               type="number"
               min={1}
-              className="col-span-3 dark:bg-zinc-800"
+              className="col-span-3 dark:bg-slate-900"
               {...register("quantity", {
                 required: "Quantity is required",
                 min: { value: 1, message: "Quantity must be at least 1" },
@@ -224,7 +224,7 @@ const onSubmit = async (data: ProductFormData) => {
             <Input
               id="m_date"
               type="date"
-              className="col-span-3 dark:bg-zinc-800"
+              className="col-span-3 dark:bg-slate-700 "
               {...register("m_date")}
             />
           </div>
@@ -237,7 +237,7 @@ const onSubmit = async (data: ProductFormData) => {
             <Input
               id="e_date"
               type="date"
-              className="col-span-3 dark:bg-zinc-800"
+              className="col-span-3 dark:bg-slate-700"
               {...register("e_date")}
             />
           </div>

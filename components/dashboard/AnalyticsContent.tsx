@@ -203,13 +203,7 @@ export default function AnalyticsContent() {
             </div>
           </CardContent>
         </Card>
-
-       
       </div>
-
-
-
-    
     </>
   )
 }

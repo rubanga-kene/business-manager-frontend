@@ -66,7 +66,7 @@ export async function deleteSupplier(
   try {
     await API.delete(`/suppliers/${id}/delete/`)
 
-    toast.success( `${name} was successfully deleted.`,{position:'top-center'})
+    toast.success( `${name} deleted successfully .`,{position:'top-center'})
 
     onSuccess?.()
   } catch (error) {
@@ -89,7 +89,7 @@ export async function updateSupplier(
   try {
     await API.put(`/suppliers/${id}/update/`, data);
 
-    toast.success(`${data.supplier_name} was successfully updated.`, {
+    toast.success(`${data.supplier_name}'s details updated successfully .`, {
       position: "top-center",
     });
 

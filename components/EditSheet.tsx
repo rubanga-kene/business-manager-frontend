@@ -67,8 +67,8 @@ export function EditSheet<T extends Record<string, any>>({
   };
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent side="right" className="w-[400px] sm:w-[500px]">
+    <Sheet open={open} onOpenChange={setOpen} >
+      <SheetContent side="right" className="w-[400px] sm:w-[500px] dark:bg-slate-800">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
@@ -81,6 +81,7 @@ export function EditSheet<T extends Record<string, any>>({
                 type={type}
                 placeholder={placeholder}
                 value={formData[name] ?? ""}
+                className="dark:bg-slate-900"
                 onChange={(e) =>
                   handleChange(
                     name,
@@ -93,7 +94,7 @@ export function EditSheet<T extends Record<string, any>>({
 
           <SheetFooter className="pt-4 flex justify-end gap-2">
             <SheetClose asChild>
-              <Button type="button" variant="outline" disabled={loading}>
+              <Button type="button" variant="outline" disabled={loading} className="bg-red-500 hover:bg-red-600">
                 Cancel
               </Button>
             </SheetClose>

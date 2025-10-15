@@ -75,8 +75,8 @@ export default function EditProductSheet({
       reset({
         product_name: initialData.product_name,
         product_description: initialData.product_description || "",
-        category_id: String(initialData.category.id),
-        supplier_id: String(initialData.supplier.id),
+        category_id: String(initialData.category.id) || undefined,
+        supplier_id: String(initialData.supplier.id) || undefined,
         quantity: initialData.quantity,
         unit_price: initialData.unit_price,
         m_date: initialData.m_date?.split('T')[0] || undefined,
@@ -102,7 +102,7 @@ export default function EditProductSheet({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent className="sm:max-w-[600px] overflow-y-auto">
+      <SheetContent className="sm:max-w-[600px] overflow-y-auto dark:bg-slate-800">
         <SheetHeader>
           <SheetTitle>Edit Product</SheetTitle>
         </SheetHeader>
@@ -121,11 +121,12 @@ export default function EditProductSheet({
                 <Select 
                   value={field.value} 
                   onValueChange={field.onChange}
+                  
                 >
-                  <SelectTrigger className="col-span-3">
+                  <SelectTrigger className="col-span-3 dark:bg-slate-900">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="dark:bg-slate-900">
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={String(category.id)}>
                         {category.category_name}
@@ -156,10 +157,10 @@ export default function EditProductSheet({
                   value={field.value}
                   onValueChange={field.onChange}
                 >
-                  <SelectTrigger className="col-span-3">
+                  <SelectTrigger className="col-span-3 dark:bg-slate-900">
                     <SelectValue placeholder="Select supplier" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="dark:bg-slate-900">
                     {suppliers.map((supplier) => (
                       <SelectItem key={supplier.id} value={String(supplier.id)}>
                         {supplier.supplier_name}
@@ -183,7 +184,7 @@ export default function EditProductSheet({
             </Label>
             <Input
               id="product_name"
-              className="col-span-3"
+              className="col-span-3 dark:bg-slate-900"
               {...register("product_name", {
                 required: "Product name is required",
               })}
@@ -202,7 +203,7 @@ export default function EditProductSheet({
             </Label>
             <Textarea
               id="product_description"
-              className="col-span-3"
+              className="col-span-3 dark:bg-slate-900"
               {...register("product_description")}
             />
           </div>
@@ -217,7 +218,7 @@ export default function EditProductSheet({
               type="number"
               step="0.01"
               min="0.01"
-              className="col-span-3"
+              className="col-span-3 dark:bg-slate-900"
               {...register("unit_price", {
                 required: "Price is required",
                 valueAsNumber: true,
@@ -243,7 +244,7 @@ export default function EditProductSheet({
               id="quantity"
               type="number"
               min="1"
-              className="col-span-3"
+              className="col-span-3 dark:bg-slate-900"
               {...register("quantity", {
                 required: "Quantity is required",
                 valueAsNumber: true,
@@ -268,7 +269,7 @@ export default function EditProductSheet({
             <Input
               id="m_date"
               type="date"
-              className="col-span-3"
+              className="col-span-3 dark:bg-slate-900"
               {...register("m_date")}
             />
           </div>
@@ -281,18 +282,18 @@ export default function EditProductSheet({
             <Input
               id="e_date"
               type="date"
-              className="col-span-3"
+              className="col-span-3 dark:bg-slate-900"
               {...register("e_date")}
             />
           </div>
 
           <SheetFooter className="mt-4">
             <SheetClose asChild>
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" className="bg-red-500 hover:bg-red-600 text-white hover:text-white">
                 Cancel
               </Button>
             </SheetClose>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="bg-blue-500 hover:bg-blue-600 text-white">
               {isSubmitting ? "Saving..." : "Save Changes"}
             </Button>
           </SheetFooter>

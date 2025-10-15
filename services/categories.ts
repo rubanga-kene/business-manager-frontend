@@ -96,6 +96,20 @@ export async function updateCategory(
   }
 }
 
+// Summary
+type CategorySummary = {
+  total_categories: number;
+  most_populated: { name: string; count: number } | null;
+  least_populated: { name: string; count: number } | null;
+  uncategorized_count: number;
+};
+
+export const fetchCategorySummary = async (): Promise<CategorySummary> => {
+  const res = await API.get<CategorySummary>('/category-summary/');
+  return res.data;
+};
+
+
 
 
     

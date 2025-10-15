@@ -11,7 +11,8 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 
-import { Building2, Menu} from "lucide-react";
+import { Menu} from "lucide-react";
+import Image from "next/image";
 
 interface MenuItem {
   title: string;
@@ -55,8 +56,13 @@ export function DashboardSidebar({
             collapsed && "justify-center"
           )}
         >
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-purple-600 text-white">
-            <Building2 className="size-4" />
+          <div className="flex aspect-square items-center justify-center rounded-lg text-white">
+            <Image
+            src={"/images/bms-fav.png"}
+            width={60}
+            height={50}
+            alt="BMS Logo"
+            className="rounded-lg"/>
           </div>
           {!collapsed && (
             <div className="grid flex-1 text-left text-sm leading-tight">

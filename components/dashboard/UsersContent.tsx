@@ -19,7 +19,7 @@ import { UserCog } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
-import UsersDialog from "../users/users-dialog";
+import UsersDialog from "../users/UsersDialog";
 import { ToastContainer } from "react-toastify";
 
 
